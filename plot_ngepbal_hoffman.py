@@ -15,7 +15,7 @@ import sys, cftime
 
 
 #ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build/EcosystemandCarbonCycle/GlobalNetEcosystemCarbonBalance"
-ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build/"
+ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build_useneedirectly/"
 
 
 ncfiles = glob.glob(ilamb_root + "/EcosystemandCarbonCycle/GlobalNetEcosystemCarbonBalance/Hoffman/*.nc")
@@ -42,19 +42,19 @@ for ncfile in ncfiles:
 
              
          elif 'CNP' in ncfile:
-             ax.plot(xx, yy, '-', color='blue', label='CNP')
-         else:
-             ax.plot(xx, yy, '-', color='red', label='CNonly')
+             ax.plot(xx, yy, '-', color='blue', label='ELMv1-CNP')
+         elif 'CNonly' in ncfile:
+             ax.plot(xx, yy, '-', color='red', label='ELMv1-CN')
 
 
          ax.set_xlabel("Year", fontsize="large", fontweight="bold")
-         ax.set_xlim(1850, 2005)
+         ax.set_xlim(1850, 2010)
          ax.set_ylabel("Accumulative land carbon sink (PgC)", fontsize="large", fontweight="bold")
          ax.set_ylim(-55, 25)
 
          ax.tick_params(labelsize='large', width=1)
          ax.legend(bbox_to_anchor=(0.05, 1), loc='upper left', borderaxespad=0.)
 
-ax.hlines(0, 1850, 2005, colors='grey', linestyles='--')
+ax.hlines(0, 1850, 2010, colors='grey', linestyles='--')
 
 plt.savefig("ngepbal_hoffman.png", dpi=300)

@@ -15,13 +15,21 @@ import sys, cftime
 
 
 #ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build/EcosystemandCarbonCycle/GlobalNetEcosystemCarbonBalance"
-#ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build/"
 ilamb_root="/qfs/people/xumi699/scratch/proc_ilamb4xj/ilamb_wks/_build_useneedirectly/"
 
 
 ncfiles = glob.glob(ilamb_root + "/EcosystemandCarbonCycle/GlobalNetEcosystemCarbonBalance/GCP/*.nc")
 
 print (ncfiles)
+
+
+
+with nc4.Dataset("GCP_Benchmark.nc", "r") as newncf:
+
+    xxnew = newncf.groups['MeanState'].variables['time_'][:] / 365. + 1851
+    yynew = newncf.groups['MeanState'].variables['accumulate_of_nbp_over_global'][:] * (-1.)
+    ybnew = newncf.groups['MeanState'].variables['accumulate_of_nbp_over_global_bnds'][:,0] * (-1.)
+    ytnew = newncf.groups['MeanState'].variables['accumulate_of_nbp_over_global_bnds'][:,1] * (-1.)
 
 
 fig, ax = plt.subplots()
@@ -36,19 +44,25 @@ for ncfile in ncfiles:
 
 
          if 'Benchmark' in ncfile:
+             ax.fill_between(xxnew, ybnew, ytnew, lw=0, color = 'k', alpha = 0.25)
+             #ax.plot(xxnew, yynew, '--', color='black', label='Benchmark New')
              ax.plot(xx, yy, '-', color='black', label='Benchmark')
+
+             
          elif 'CNP' in ncfile:
-             ax.plot(xx, yy, '-', color='blue', label='CNP')
+             ax.plot(xx, yy, '-', color='blue', label='ELMv1-CNP')
          elif 'CNonly' in ncfile:
-             ax.plot(xx, yy, '-', color='red', label='CNonly')
+             ax.plot(xx, yy, '-', color='red', label='ELMv1-CN')
 
 
          ax.set_xlabel("Year", fontsize="large", fontweight="bold")
          ax.set_xlim(1960, 2010)
          ax.set_ylabel("Accumulative land carbon sink (PgC)", fontsize="large", fontweight="bold")
-         ax.set_ylim(-10, 60)
+         ax.set_ylim(-30, 80)
 
          ax.tick_params(labelsize='large', width=1)
          ax.legend(bbox_to_anchor=(0.05, 1), loc='upper left', borderaxespad=0.)
-ax.hlines(0, 1960, 2010, colors='grey', linestyles='--')
-plt.savefig("ngepbal_gcp.png", dpi=300)
+
+ax.hlines(0, 1850, 2010, colors='grey', linestyles='--')
+
+plt.savefig("ngepbal_gcp_withuncertainty.png", dpi=300)
